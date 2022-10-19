@@ -17,6 +17,11 @@ class Visitor(ast.NodeVisitor):
 class Plugin(ABC):
     @property
     @abstractmethod
+    def name(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
     def visitors(self) -> List[Type[Visitor]]:
         ...
 
