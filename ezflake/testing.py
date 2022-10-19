@@ -17,7 +17,7 @@ def _violation_from_src(plugin_type: Type[Plugin], src: str):
     return violations[0]
 
 
-def assert_violates(plugin_type: Type[Plugin], src: str, expected_violation: Violation):
+def assert_violates(plugin_type: Type[Plugin], expected_violation: Violation, src: str):
     violation = _violation_from_src(plugin_type, src)
     assert violation is not None
     assert violation == expected_violation
