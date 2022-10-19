@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import partial
-from typing import Type, Dict, Any
+from typing import Type, Dict, Any, Callable
 
 from .plugin import Plugin
 
@@ -26,3 +26,4 @@ class Violation:
 
 
 create_violation = partial(partial, Violation)
+ViolationFactory = Callable[[int, int, Dict[str, Any]], Violation]
