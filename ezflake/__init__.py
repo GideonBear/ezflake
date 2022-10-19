@@ -1,2 +1,2 @@
-from .plugin import Plugin, Violation
+from .plugin import Plugin, Visitor
 from .violation import create_violation
