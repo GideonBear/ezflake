@@ -15,7 +15,7 @@ class Violation:
 
     @property
     def full_message(self):
-        return f'{self.code} {self.formatted_message}'
+        return f'{str(self.code).zfill(3)} {self.formatted_message}'
 
     @property
     def formatted_message(self):
