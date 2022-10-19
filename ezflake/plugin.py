@@ -28,12 +28,12 @@ class Plugin(ABC):
         violation = violation_type(node.lineno, node.col_offset, kwargs)
         self.violations.append(violation)
 
-    def _run(self) -> Iterator[Violation]:
+    def _run(self) -> List[Violation]:
         for visitor_type in self.visitors:
             visitor = visitor_type(self)
             visitor.visit(self._tree)
 
-        yield from self.violations
+        return self.violations
 
     def run(self) -> Iterator[Tuple[int, int, str, type]]:
         yield from (violation.as_tuple(self.__class__) for violation in self.violations)
