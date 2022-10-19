@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ast
 from abc import abstractmethod, ABC
-from typing import Tuple, Generator, List, Callable, Type
+from typing import Tuple, Generator, List, Callable, Type, Dict, Any
 
 from .violation import Violation
 
@@ -24,8 +24,8 @@ class Plugin(ABC):
         self._tree = tree
         self.violations: List[Violation] = []
 
-    def violate(self, violation_type: Callable[[int, int], Violation], node: ast.AST) -> None:
-        violation = violation_type(node.lineno, node.col_offset)
+    def violate(self, violation_type: Callable[[int, int, Dict[str, Any]], Violation], node: ast.AST, **kwargs) -> None:
+        violation = violation_type(node.lineno, node.col_offset, kwargs)
         self.violations.append(violation)
 
     def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
