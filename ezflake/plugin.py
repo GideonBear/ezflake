@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import ast
 from abc import abstractmethod, ABC
-from typing import Tuple, Generator, List, Type
+from typing import Tuple, List, Type, Iterator
 
 from .violation import Violation, ViolationFactory
 
@@ -28,10 +28,12 @@ class Plugin(ABC):
         violation = violation_type(node.lineno, node.col_offset, kwargs)
         self.violations.append(violation)
 
-    def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
+    def _run(self) -> Iterator[Violation]:
         for visitor_type in self.visitors:
             visitor = visitor_type(self)
             visitor.visit(self._tree)
 
-        for violation in self.violations:
-            yield violation.as_tuple(self.__class__)
+        yield from self.violations
+
+    def run(self) -> Iterator[Tuple[int, int, str, type]]:
+        yield from (violation.as_tuple(self.__class__) for violation in self.violations)
