@@ -9,7 +9,7 @@ from .plugin import Plugin
 class Violation:
     code: int
     message: str
-    lineno: int
+    line: int
     col: int
     kwargs: Dict[str, Any]
 
@@ -22,7 +22,7 @@ class Violation:
         return self.message.format(**self.kwargs)
 
     def as_tuple(self, type_: Type[Plugin]):
-        return self.lineno, self.col, self.full_message, type_
+        return self.line, self.col, self.full_message, type_
 
 
 create_violation = partial(partial, Violation)
