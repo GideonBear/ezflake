@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import ast
 from abc import abstractmethod, ABC
-from typing import Tuple, List, Type, Iterator
+from typing import Tuple, List, Type, Iterator, TYPE_CHECKING
 
-from .violation import Violation, ViolationFactory
+if TYPE_CHECKING:
+    from .violation import Violation, ViolationFactory
 
 
 class Visitor(ast.NodeVisitor):

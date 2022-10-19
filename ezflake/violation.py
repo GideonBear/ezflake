@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from functools import partial
-from typing import Type, Dict, Any, Callable
+from typing import Type, Dict, Any, Callable, TYPE_CHECKING
 
-from .plugin import Plugin
+if TYPE_CHECKING:
+    from .plugin import Plugin
 
 
 @dataclass
