@@ -30,8 +30,8 @@ class Plugin(ABC):
         self._tree = tree
         self.violations: List[Violation] = []
 
-    def violate(self, violation_type: ViolationFactory, node: ast.AST, **kwargs) -> None:
-        violation = violation_type(node.lineno, node.col_offset, kwargs)
+    def violate(self, violation_type: ViolationFactory, node: ast.AST, *args, **kwargs) -> None:
+        violation = violation_type(node.lineno, node.col_offset, args, kwargs)
         self.violations.append(violation)
 
     def _run(self) -> List[Violation]:

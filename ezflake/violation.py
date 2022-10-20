@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Type, Dict, Any, Callable, TYPE_CHECKING, List
+from typing import Type, Dict, Any, Callable, TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from .plugin import Plugin
@@ -14,7 +14,7 @@ class Violation:
     message: str
     line: int
     col: int
-    args: List[Any] = field(default_factory=list)
+    args: Tuple[Any, ...] = field(default_factory=list)
     kwargs: Dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -30,4 +30,4 @@ class Violation:
 
 
 create_violation = partial(partial, Violation)
-ViolationFactory = Callable[[int, int, Dict[str, Any]], Violation]
+ViolationFactory = Callable[[int, int, Tuple[Any, ...], Dict[str, Any]], Violation]
