@@ -14,7 +14,7 @@ class Violation:
     message: str
     line: int
     col: int
-    args: Tuple[Any, ...] = field(default_factory=list)
+    args: Tuple[Any, ...] = ()
     kwargs: Dict[str, Any] = field(default_factory=dict)
 
     @property
