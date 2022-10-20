@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
-from typing import Type, Dict, Any, Callable, TYPE_CHECKING
+from typing import Type, Dict, Any, Callable, TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .plugin import Plugin
@@ -14,7 +14,8 @@ class Violation:
     message: str
     line: int
     col: int
-    kwargs: Dict[str, Any]
+    args: List[Any] = field(default_factory=list)
+    kwargs: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def full_message(self):
@@ -22,7 +23,7 @@ class Violation:
 
     @property
     def formatted_message(self):
-        return self.message.format(**self.kwargs)
+        return self.message.format(*self.args, **self.kwargs)
 
     def as_tuple(self, type_: Type[Plugin]):
         return self.line, self.col, self.full_message, type_
