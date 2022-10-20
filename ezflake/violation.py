@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class Violation:
-    code: int
+    code: str
     message: str
     line: int
     col: int
@@ -19,7 +19,7 @@ class Violation:
 
     @property
     def full_message(self):
-        return f'{str(self.code).zfill(3)} {self.formatted_message}'
+        return f'{self.code} {self.formatted_message}'
 
     @property
     def formatted_message(self):
