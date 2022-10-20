@@ -42,4 +42,5 @@ class Plugin(ABC):
         return self.violations
 
     def run(self) -> Iterator[Tuple[int, int, str, type]]:
-        yield from (violation.as_tuple(self.__class__) for violation in self.violations)
+        violations = self._run()
+        yield from (violation.as_tuple(self.__class__) for violation in violations)
