@@ -27,7 +27,7 @@ class Plugin(ABC):
         ...
 
     def __init__(self, tree: ast.AST):
-        self._tree = tree
+        self.tree = tree
         self.violations: List[Violation] = []
 
     def violate(self, violation_type: ViolationFactory, node: ast.AST, *args, **kwargs) -> None:
@@ -37,7 +37,7 @@ class Plugin(ABC):
     def _run(self) -> List[Violation]:
         for visitor_type in self.visitors:
             visitor = visitor_type(self)
-            visitor.visit(self._tree)
+            visitor.visit(self.tree)
 
         return self.violations
 
