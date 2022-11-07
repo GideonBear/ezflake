@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-import ast
+from _ast import AST
 from abc import abstractmethod, ABC
-from typing import Tuple, List, Type, Iterator, TYPE_CHECKING
+from ast import NodeVisitor
+from typing import List, Type, Iterator, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .violation import Violation, ViolationFactory
+    from .violation import Violation, ViolationType, ViolationTuple
 
 
-class Visitor(ast.NodeVisitor):
+class Visitor(NodeVisitor):
     def __init__(self, plugin: Plugin):
         super().__init__()
         self.plugin = plugin
-        self.violate = plugin.violate
+        self.violate_node = plugin.violate_node
 
 
 class Plugin(ABC):
@@ -26,21 +27,26 @@ class Plugin(ABC):
     def visitors(self) -> List[Type[Visitor]]:
         ...
 
-    def __init__(self, tree: ast.AST):
+    @property
+    @abstractmethod
+    def version(self) -> str:
+        ...
+
+    def __init__(self, tree: AST):
         self.tree = tree
         self.violations: List[Violation] = []
 
-    def violate(self, violation_type: ViolationFactory, node: ast.AST, *args, **kwargs) -> None:
+    def violate_node(self, violation_type: ViolationType, node: AST, *args, **kwargs) -> None:
         violation = violation_type(node.lineno, node.col_offset, args, kwargs)
         self.violations.append(violation)
 
-    def _run(self) -> List[Violation]:
+    def get_violations(self) -> List[Violation]:
         for visitor_type in self.visitors:
             visitor = visitor_type(self)
             visitor.visit(self.tree)
 
         return self.violations
 
-    def run(self) -> Iterator[Tuple[int, int, str, type]]:
-        violations = self._run()
+    def run(self) -> Iterator[ViolationTuple]:
+        violations = self.get_violations()
         yield from (violation.as_tuple(self.__class__) for violation in violations)

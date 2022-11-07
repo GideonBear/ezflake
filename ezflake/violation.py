@@ -1,33 +1,36 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from functools import partial
-from typing import Type, Dict, Any, Callable, TYPE_CHECKING, Tuple
+from typing import Type, Dict, Tuple
 
-if TYPE_CHECKING:
-    from .plugin import Plugin
+from .plugin import Plugin
+
+
+ViolationTuple = Tuple[int, int, str, Type[Plugin]]
+
+
+@dataclass
+class ViolationType:
+    code: str
+    message: str
+
+    def __post_init__(self):
+        self.full_message = f'{self.code} {self.message}'
+
+    def __call__(self, *args, **kwargs):
+        return Violation(self, *args, **kwargs)
 
 
 @dataclass
 class Violation:
-    code: str
-    message: str
-    line: int
+    type: ViolationType
+    lineno: int
     col: int
-    args: Tuple[Any, ...] = ()
-    kwargs: Dict[str, Any] = field(default_factory=dict)
+    args: Tuple[object, ...] = ()
+    kwargs: Dict[str, object] = field(default_factory=dict)
 
-    @property
-    def full_message(self):
-        return f'{self.code} {self.formatted_message}'
+    def __post_init__(self):
+        self.formatted_message = self.type.full_message.format(*self.args, **self.kwargs)
 
-    @property
-    def formatted_message(self):
-        return self.message.format(*self.args, **self.kwargs)
-
-    def as_tuple(self, type_: Type[Plugin]):
-        return self.line, self.col, self.full_message, type_
-
-
-create_violation = partial(partial, Violation)
-ViolationFactory = Callable[[int, int, Tuple[Any, ...], Dict[str, Any]], Violation]
+    def as_tuple(self, type_: Type[Plugin]) -> ViolationTuple:
+        return self.lineno, self.col, self.formatted_message, type_
