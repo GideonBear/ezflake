@@ -1,5 +1,6 @@
 import re
 import subprocess
+from logging import getLogger
 
 from pytest import mark
 from pathlib import Path
@@ -7,6 +8,8 @@ from typing import Callable, List, Union
 
 from ezflake.violation import Violation, ViolationType
 
+
+logger = getLogger(__name__)
 
 SPLIT_SYMBOL = '&'
 FORMAT = '%(path)s&%(code)s&%(text)s&%(row)d&%(col)d'
@@ -24,6 +27,7 @@ def generate_tests(testdir: Path) -> Callable[[], None]:
         expected_violations = get_expected_violations(text)
         violations = run_flake8(file, file.with_suffix('').name)
 
+        logger.info(f'Comparing {violations} and {expected_violations}')
         assert violations == expected_violations, \
             f'Expected violations:\n{expected_violations}\nGot violations:\n{violations}'
 
