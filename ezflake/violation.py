@@ -32,5 +32,15 @@ class Violation:
     def __post_init__(self) -> None:
         self.formatted_message = self.type.full_message.format(*self.args, **self.kwargs)
 
+    @classmethod
+    def from_unknown_type(
+        cls,
+        code: str,
+        message: str,
+        *args: object, **kwargs: object
+    ) -> Violation:
+        violation_type = ViolationType(code, message)
+        return violation_type(*args, **kwargs)
+
     def as_tuple(self, type_: Type[Plugin]) -> ViolationTuple:
         return self.lineno, self.col, self.formatted_message, type_
