@@ -36,7 +36,7 @@ class Plugin(ABC):
         self.tree = tree
         self.violations: List[Violation] = []
 
-    def violate_node(self, violation_type: ViolationType, node: AST, *args, **kwargs) -> None:
+    def violate_node(self, violation_type: ViolationType, node: AST, *args: object, **kwargs: object) -> None:
         violation = violation_type(node.lineno, node.col_offset, args, kwargs)
         self.violations.append(violation)
 

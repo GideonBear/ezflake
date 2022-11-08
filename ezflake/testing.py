@@ -18,11 +18,11 @@ EXPECTED_VIOLATION_REGEX = re.compile(
 )
 
 
-def generate_tests(testdir: Path) -> Callable[[], None]:
+def generate_tests(testdir: Path) -> Callable[..., None]:
     files = testdir.iterdir()
 
     @mark.parametrize('file', files)
-    def test_wrapper(file: Path):
+    def test_wrapper(file: Path) -> None:
         text = file.read_text()
         expected_violations = get_expected_violations(text)
         violations = run_flake8(file, file.with_suffix('').name)
@@ -65,7 +65,7 @@ def get_expected_violations(text: str) -> List[Violation]:
 
 
 def run_flake8_text(file: Path, select: str, format: str = 'default') -> str:
-    cmd: List[Union[str, Path]] = ['venv/bin/python', '-m', 'flake8', file, f'--select={select}', f'--format={format}']
+    cmd = ['venv/bin/python', '-m', 'flake8', str(file), f'--select={select}', f'--format={format}']
     process = subprocess.run(cmd, stdout=subprocess.PIPE)
     stdout = process.stdout
     stderr = process.stderr

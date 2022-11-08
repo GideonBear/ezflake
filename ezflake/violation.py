@@ -14,10 +14,10 @@ class ViolationType:
     code: str
     message: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.full_message = f'{self.code} {self.message}'
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: object, **kwargs: object) -> Violation:
         return Violation(self, *args, **kwargs)
 
 
@@ -29,7 +29,7 @@ class Violation:
     args: Tuple[object, ...] = ()
     kwargs: Dict[str, object] = field(default_factory=dict)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.formatted_message = self.type.full_message.format(*self.args, **self.kwargs)
 
     def as_tuple(self, type_: Type[Plugin]) -> ViolationTuple:
