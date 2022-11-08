@@ -1,5 +1,5 @@
 packs=('../flake8-unfinished')
-py=python3.9
+py=python3.8
 ezdir=$(pwd)
 venv="$ezdir/venv"
 exe="$venv/bin/python"
@@ -17,12 +17,12 @@ if [ "$1" = 'setup' ]; then
     echo "Installing $pack to venv..."
     $exe -m pip install -e "$pack"
   done
-  echo "Done"
+
+else
+  for pack in ${packs[@]}; do
+    echo "Running tests for $pack..."
+    $exe -m pytest "$pack" $@
+  done
+
 fi
-
-for pack in ${packs[@]}; do
-  echo "Running tests for $pack..."
-  $exe -m pytest "$pack"
-done
-
 echo "Done"
