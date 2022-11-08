@@ -10,12 +10,19 @@ ViolationTuple = Tuple[int, int, str, Type[Plugin]]
 
 
 @dataclass
-class ViolationType:
+class ViolationClass:
     code: str
+
+
+@dataclass
+class ViolationType:
+    class_: ViolationClass
+    code: int
     message: str
 
     def __post_init__(self) -> None:
-        self.full_message = f'{self.code} {self.message}'
+        self.full_code = self.class_.code + str(self.code).zfill(3)
+        self.full_message = f'{self.full_code} {self.message}'
 
     def __call__(self, *args: object, **kwargs: object) -> Violation:
         return Violation(self, *args, **kwargs)
