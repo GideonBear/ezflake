@@ -12,7 +12,7 @@ from ezflake.violation import Violation, ViolationType
 logger = getLogger(__name__)
 
 SPLIT_SYMBOL = '&'
-FORMAT = '%(path)s&%(code)s&%(text)s&%(row)d&%(col)d'
+FORMAT = '%(path)s&%(row)d&%(col)d&%(code)s&%(text)s'
 EXPECTED_VIOLATION_REGEX = re.compile(
     r'# ([1-9]+): (.+): (.+)$'
 )
@@ -41,9 +41,9 @@ def run_flake8(file: Path, select: str) -> List[Violation]:
     for line in lines:
         if line == '':
             continue
-        elif line.count(SPLIT_SYMBOL) != 4:
-            raise ValueError(f'Usage of "{SPLIT_SYMBOL}" in text or wrong format specified', line)
-        path, code, text, lineno, col = line.split(SPLIT_SYMBOL)
+        elif line.count(SPLIT_SYMBOL) < 4:
+            raise ValueError('Wrong format', line)
+        path, lineno, col, code, text = line.split(SPLIT_SYMBOL, maxsplit=4)
         violation_type = ViolationType(code, text)
         violation = Violation(violation_type, int(lineno), int(col))
         violations.append(violation)
