@@ -45,9 +45,8 @@ def run_flake8(file: Path, select: str) -> List[Violation]:
             continue
         elif line.count(SPLIT_SYMBOL) < 4:
             raise ValueError('Wrong format', line)
-        path, lineno, col, code, text = line.split(SPLIT_SYMBOL, maxsplit=4)
-        violation_type = ViolationType(code, text)
-        violation = Violation(violation_type, int(lineno), int(col))
+        path, lineno, col, code, message = line.split(SPLIT_SYMBOL, maxsplit=4)
+        violation = Violation.from_unknown_type(code, message, int(lineno), int(col))
         violations.append(violation)
     return violations
 
@@ -63,8 +62,7 @@ def get_expected_violations(text: str, default_code: str) -> List[Violation]:
         if code is None:
             code = default_code
         assert code == default_code
-        violation_type = ViolationType(code, message)
-        violation = Violation(violation_type, lineno + 1, int(col))
+        violation = Violation.from_unknown_type(code, message, lineno + 1, int(col))
         violations.append(violation)
     return violations
 
