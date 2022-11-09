@@ -14,18 +14,20 @@ logger = getLogger(__name__)
 SPLIT_SYMBOL = '&'
 FORMAT = '%(path)s&%(row)d&%(col)d&%(code)s&%(text)s'
 EXPECTED_VIOLATION_REGEX = re.compile(
-    r'# ([1-9]+): (.+): (.+)$'
+    r'# ([1-9]+): ((.+): )??(.+)$'
 )
 
 
 def generate_tests(testdir: Path) -> Callable[..., None]:
     files = testdir.iterdir()
+    tests = (file.with_suffix('').name for file in files)
 
-    @mark.parametrize('file', files)
-    def test_wrapper(file: Path) -> None:
+    @mark.parametrize('test', tests)
+    def test_wrapper(test: str) -> None:
+        file = (testdir / test).with_suffix('.py')
         text = file.read_text()
-        expected_violations = get_expected_violations(text)
-        violations = run_flake8(file, file.with_suffix('').name)
+        expected_violations = get_expected_violations(text, test)
+        violations = run_flake8(file, test)
 
         logger.info(f'Comparing {violations} and {expected_violations}')
         assert violations == expected_violations, \
@@ -50,14 +52,17 @@ def run_flake8(file: Path, select: str) -> List[Violation]:
     return violations
 
 
-def get_expected_violations(text: str) -> List[Violation]:
+def get_expected_violations(text: str, default_code: str) -> List[Violation]:
     lines = text.split('\n')
     violations = []
     for lineno, line in enumerate(lines):
         match = EXPECTED_VIOLATION_REGEX.search(line)
         if not match:
             continue
-        col, code, message = match.groups()
+        col, _, code, message = match.groups()
+        if code is None:
+            code = default_code
+        assert code == default_code
         violation_type = ViolationType(code, message)
         violation = Violation(violation_type, lineno + 1, int(col))
         violations.append(violation)
