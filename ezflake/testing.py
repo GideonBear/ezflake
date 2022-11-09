@@ -20,7 +20,7 @@ EXPECTED_VIOLATION_REGEX = re.compile(
 
 def generate_tests(testdir: Path) -> Callable[..., None]:
     files = testdir.iterdir()
-    tests = (file.with_suffix('').name for file in files)
+    tests = sorted(file.with_suffix('').name for file in files)
 
     @mark.parametrize('test', tests)
     def test_wrapper(test: str) -> None:
