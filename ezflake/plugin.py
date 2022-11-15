@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from _ast import AST
+from ast import AST
 from abc import abstractmethod, ABC
 from typing import List, Type, Iterator, TYPE_CHECKING
 
