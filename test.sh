@@ -1,5 +1,5 @@
 packs=('../flake8-unfinished')
-py=python3.8
+py=python3.9
 ezdir=$(pwd)
 venv="$ezdir/venv"
 exe="$venv/bin/python"
