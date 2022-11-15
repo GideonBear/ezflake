@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import re
 import subprocess
+from collections.abc import Callable
 from logging import getLogger
+from pathlib import Path
 
 from pytest import mark
-from pathlib import Path
-from typing import Callable, List, Union
 
-from ezflake.violation import Violation, ViolationType
+from .violation import Violation
 
 
 logger = getLogger(__name__)
@@ -36,7 +38,7 @@ def generate_tests(testdir: Path) -> Callable[..., None]:
     return test_wrapper
 
 
-def run_flake8(file: Path, select: str) -> List[Violation]:
+def run_flake8(file: Path, select: str) -> list[Violation]:
     text = run_flake8_text(file, select, FORMAT)
     lines = text.split('\n')
     violations = []
@@ -51,7 +53,7 @@ def run_flake8(file: Path, select: str) -> List[Violation]:
     return violations
 
 
-def get_expected_violations(text: str, default_code: str) -> List[Violation]:
+def get_expected_violations(text: str, default_code: str) -> list[Violation]:
     lines = text.split('\n')
     violations = []
     for lineno, line in enumerate(lines):

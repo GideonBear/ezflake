@@ -1,4 +1,5 @@
-from .plugin import Plugin, Visitor
+from .plugin import Plugin
+from .visitor import Visitor
 from .violation import ViolationType
 
 

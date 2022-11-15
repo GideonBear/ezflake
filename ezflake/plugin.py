@@ -2,18 +2,11 @@ from __future__ import annotations
 
 from _ast import AST
 from abc import abstractmethod, ABC
-from ast import NodeVisitor
 from typing import List, Type, Iterator, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .violation import Violation, ViolationType, ViolationTuple
-
-
-class Visitor(NodeVisitor):
-    def __init__(self, plugin: Plugin):
-        super().__init__()
-        self.plugin = plugin
-        self.violate_node = plugin.violate_node
+    from . import Visitor
 
 
 class Plugin(ABC):
